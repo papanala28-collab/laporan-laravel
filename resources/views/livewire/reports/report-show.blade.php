@@ -89,14 +89,34 @@
                 </section>
 
                 @if ($report->photoUrls() !== [])
-                    <section>
+                    <section x-data="{ lightboxOpen: false, lightboxUrl: '' }">
                         <h3 class="text-sm font-semibold uppercase tracking-[0.25em] text-slate-500">Foto Laporan</h3>
-                        <div class="mt-3 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                            @foreach ($report->photoUrls() as $photo)
-                                <a href="{{ Storage::url($photo) }}" target="_blank" rel="noopener" class="overflow-hidden rounded-3xl border border-slate-200 bg-white">
-                                    <img src="{{ Storage::url($photo) }}" alt="Foto laporan" class="h-52 w-full object-cover">
-                                </a>
-                            @endforeach
+                        <div class="mt-3 overflow-hidden rounded-2xl border border-slate-200">
+                            <div class="grid grid-cols-3 gap-[1px] bg-slate-200 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6">
+                                @foreach ($report->photoUrls() as $photo)
+                                    <button type="button" @click="lightboxOpen = true; lightboxUrl = '{{ Storage::url($photo) }}'" class="group relative block aspect-square w-full overflow-hidden bg-slate-100 focus:outline-none focus:ring-inset focus:ring-4 focus:ring-amber-500/50">
+                                        <img src="{{ Storage::url($photo) }}" alt="Foto laporan" class="h-full w-full object-cover transition duration-300 group-hover:scale-105">
+                                    </button>
+                                @endforeach
+                            </div>
+                        </div>
+
+                        <!-- Lightbox Modal -->
+                        <div x-show="lightboxOpen" style="display: none;" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 p-4 sm:p-8" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
+                            <button type="button" @click="lightboxOpen = false" class="absolute right-4 top-4 z-[110] rounded-full bg-white/10 p-3 text-white transition hover:bg-white/20">
+                                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                            </button>
+
+                            <div class="relative flex h-full w-full flex-col items-center justify-center" @click.self="lightboxOpen = false">
+                                <img :src="lightboxUrl" class="max-h-full max-w-full rounded-lg object-contain shadow-2xl" @click.outside="lightboxOpen = false">
+                            </div>
+
+                            <div class="absolute bottom-6 left-1/2 flex w-[calc(100%-3rem)] -translate-x-1/2 items-center justify-center rounded-3xl bg-slate-900/80 px-6 py-4 shadow-xl backdrop-blur-md sm:w-auto sm:min-w-80">
+                                <div>
+                                    <p class="text-xs text-center uppercase tracking-wider text-slate-400">Tanggal Laporan</p>
+                                    <p class="mt-0.5 text-center text-base font-semibold text-white">{{ $report->tanggal->translatedFormat('d M Y') }}</p>
+                                </div>
+                            </div>
                         </div>
                     </section>
                 @endif

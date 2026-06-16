@@ -200,6 +200,21 @@ class ReportForm extends Component
             return;
         }
 
+        if (! $project->allow_multiple_reports) {
+            $existingReportQuery = DailyReport::query()
+                ->where('project_id', $project->id)
+                ->whereDate('tanggal', $validated['tanggal']);
+
+            if ($this->report) {
+                $existingReportQuery->where('id', '!=', $this->report->id);
+            }
+
+            if ($existingReportQuery->exists()) {
+                $this->addError('tanggal', 'Proyek ini hanya mengizinkan 1 laporan per hari. Laporan untuk tanggal ini sudah ada.');
+                return;
+            }
+        }
+
         $workers = $this->workersForReport($project, array_keys($validated['worker_attendance']));
 
         if ($workers->isEmpty()) {

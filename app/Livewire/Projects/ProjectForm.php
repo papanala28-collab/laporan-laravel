@@ -25,6 +25,8 @@ class ProjectForm extends Component
 
     public bool $status_aktif = true;
 
+    public bool $allow_multiple_reports = false;
+
     public string $keterangan = '';
 
     public array $workers = [
@@ -44,6 +46,7 @@ class ProjectForm extends Component
         $this->pic_user_ids = $project->pics()->pluck('users.id')->map(fn ($id) => (string) $id)->all();
         $this->klien = $project->klien;
         $this->status_aktif = $project->status_aktif;
+        $this->allow_multiple_reports = $project->allow_multiple_reports;
         $this->keterangan = $project->keterangan ?? '';
         $this->workers = $project->workers
             ->map(fn (ProjectWorker $worker) => [
@@ -94,6 +97,7 @@ class ProjectForm extends Component
             'pic_user_ids.*' => ['integer', 'exists:users,id'],
             'klien' => ['required', 'string', 'max:255'],
             'status_aktif' => ['required', 'boolean'],
+            'allow_multiple_reports' => ['required', 'boolean'],
             'keterangan' => ['nullable', 'string'],
             'workers' => ['nullable', 'array'],
             'workers.*.id' => ['nullable', 'integer', 'exists:project_workers,id'],
@@ -109,6 +113,7 @@ class ProjectForm extends Component
             'pic' => User::query()->whereKey($validated['pic_user_ids'])->pluck('name')->join(', '),
             'klien' => $validated['klien'],
             'status_aktif' => $validated['status_aktif'],
+            'allow_multiple_reports' => $validated['allow_multiple_reports'],
             'keterangan' => $validated['keterangan'] ?? null,
         ]);
         $project->save();

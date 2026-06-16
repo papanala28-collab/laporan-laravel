@@ -21,12 +21,14 @@ class Project extends Model
         'klien',
         'status_aktif',
         'keterangan',
+        'allow_multiple_reports',
     ];
 
     protected function casts(): array
     {
         return [
             'status_aktif' => 'boolean',
+            'allow_multiple_reports' => 'boolean',
         ];
     }
 

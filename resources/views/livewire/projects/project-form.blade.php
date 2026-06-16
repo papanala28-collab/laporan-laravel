@@ -120,6 +120,15 @@
                     </select>
                     <x-input-error :messages="$errors->get('status_aktif')" class="mt-2" />
                 </div>
+
+                <div class="md:col-span-2 flex items-center gap-3 rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                    <input id="allow_multiple_reports" type="checkbox" wire:model="allow_multiple_reports" class="rounded border-slate-300 text-amber-600 focus:ring-amber-500 w-5 h-5">
+                    <label for="allow_multiple_reports" class="text-sm font-medium text-slate-700 cursor-pointer">
+                        <span class="block">Izinkan lebih dari 1 laporan per hari</span>
+                        <span class="block text-xs font-normal text-slate-500 mt-0.5">Jika dicentang, PIC dapat membuat beberapa laporan harian pada tanggal yang sama. Secara bawaan (tidak dicentang), satu tanggal hanya bisa ada satu laporan per proyek.</span>
+                    </label>
+                    <x-input-error :messages="$errors->get('allow_multiple_reports')" class="mt-2" />
+                </div>
             </div>
 
             <div>
