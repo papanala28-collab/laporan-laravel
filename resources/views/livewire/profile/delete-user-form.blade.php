@@ -1,0 +1,80 @@
+<?php
+
+use App\Livewire\Actions\Logout;
+use Illuminate\Support\Facades\Auth;
+use Livewire\Volt\Component;
+
+new class extends Component
+{
+    public string $password = '';
+
+    /**
+     * Delete the currently authenticated user.
+     */
+    public function deleteUser(Logout $logout): void
+    {
+        $this->validate([
+            'password' => ['required', 'string', 'current_password'],
+        ]);
+
+        tap(Auth::user(), $logout(...))->delete();
+
+        $this->redirect('/', navigate: true);
+    }
+}; ?>
+
+<section class="space-y-6">
+    <header>
+        <h2 class="text-lg font-medium text-slate-900">
+            {{ __('Delete Account') }}
+        </h2>
+
+        <p class="mt-1 text-sm leading-6 text-slate-600">
+            {{ __('Once your account is deleted, all of its resources and data will be permanently deleted. Before deleting your account, please download any data or information that you wish to retain.') }}
+        </p>
+    </header>
+
+    <x-danger-button
+        x-data=""
+        x-on:click.prevent="$dispatch('open-modal', 'confirm-user-deletion')"
+        class="w-full justify-center rounded-full px-5 py-3 sm:w-auto"
+    >{{ __('Delete Account') }}</x-danger-button>
+
+    <x-modal name="confirm-user-deletion" :show="$errors->isNotEmpty()" focusable>
+        <form wire:submit="deleteUser" class="p-5 sm:p-6">
+
+            <h2 class="text-lg font-medium text-slate-900">
+                {{ __('Are you sure you want to delete your account?') }}
+            </h2>
+
+            <p class="mt-2 text-sm leading-6 text-slate-600">
+                {{ __('Once your account is deleted, all of its resources and data will be permanently deleted. Please enter your password to confirm you would like to permanently delete your account.') }}
+            </p>
+
+            <div class="mt-6">
+                <x-input-label for="password" value="{{ __('Password') }}" class="sr-only" />
+
+                <x-text-input
+                    wire:model="password"
+                    id="password"
+                    name="password"
+                    type="password"
+                    class="mt-2 block w-full sm:w-3/4"
+                    placeholder="{{ __('Password') }}"
+                />
+
+                <x-input-error :messages="$errors->get('password')" class="mt-2" />
+            </div>
+
+            <div class="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+                <x-secondary-button x-on:click="$dispatch('close')" class="w-full justify-center rounded-full px-5 py-3 sm:w-auto">
+                    {{ __('Cancel') }}
+                </x-secondary-button>
+
+                <x-danger-button class="w-full justify-center rounded-full px-5 py-3 sm:ms-3 sm:w-auto">
+                    {{ __('Delete Account') }}
+                </x-danger-button>
+            </div>
+        </form>
+    </x-modal>
+</section>
