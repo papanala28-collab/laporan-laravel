@@ -16,12 +16,12 @@
                 <div>
                     <x-input-label value="Jam kerja (Mulai - Selesai)" />
                     <div class="mt-2 flex items-center gap-3">
-                        <div class="w-full">
-                            <x-text-input id="start_time" type="time" class="block w-full" wire:model="start_time" />
+                        <div class="w-full" x-data x-init="flatpickr($refs.startTime, {enableTime: true, noCalendar: true, dateFormat: 'H:i', time_24hr: true, disableMobile: true})">
+                            <x-text-input x-ref="startTime" type="text" class="block w-full bg-white text-center" wire:model="start_time" placeholder="00:00" readonly />
                         </div>
-                        <span class="text-sm text-slate-500">s/d</span>
-                        <div class="w-full">
-                            <x-text-input id="end_time" type="time" class="block w-full" wire:model="end_time" />
+                        <span class="text-sm font-medium text-slate-500">s/d</span>
+                        <div class="w-full" x-data x-init="flatpickr($refs.endTime, {enableTime: true, noCalendar: true, dateFormat: 'H:i', time_24hr: true, disableMobile: true})">
+                            <x-text-input x-ref="endTime" type="text" class="block w-full bg-white text-center" wire:model="end_time" placeholder="00:00" readonly />
                         </div>
                     </div>
                     <x-input-error :messages="$errors->get('start_time')" class="mt-2" />
@@ -72,45 +72,27 @@
                             Proyek ini belum punya data tenaga kerja. Tambahkan pekerja di menu edit proyek.
                         </div>
                     @else
-                        <div class="overflow-hidden rounded-3xl border border-slate-200 bg-white">
-                            <div class="overflow-x-auto">
-                                <table class="min-w-full table-fixed divide-y divide-slate-200 text-sm">
-                                    <colgroup>
-                                        <col class="w-14">
-                                        <col>
-                                        <col class="w-32">
-                                    </colgroup>
-                                    <thead class="bg-slate-50 text-slate-500">
-                                        <tr>
-                                            <th class="px-3 py-3 text-center text-[11px] font-semibold uppercase tracking-[0.16em] sm:px-4">No</th>
-                                            <th class="px-3 py-3 text-left text-[11px] font-semibold uppercase tracking-[0.16em] sm:px-4">Nama pekerja</th>
-                                            <th class="px-3 py-3 text-left text-[11px] font-semibold uppercase tracking-[0.16em] sm:px-4">Absen</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="divide-y divide-slate-100">
-                                        @foreach ($attendanceWorkers as $index => $worker)
-                                            <tr>
-                                                <td class="px-3 py-3 align-top text-center sm:px-4">
-                                                    <span class="inline-flex h-8 w-8 items-center justify-center rounded-full bg-slate-100 text-sm font-semibold text-slate-600">{{ $index + 1 }}</span>
-                                                </td>
-                                                <td class="px-3 py-3 sm:px-4">
-                                                    <p class="font-medium text-slate-800">{{ $worker->name }}</p>
-                                                    @if ($worker->job_title)
-                                                        <p class="mt-1 text-xs text-slate-500">{{ $worker->job_title }}</p>
-                                                    @endif
-                                                </td>
-                                                <td class="px-3 py-3 sm:px-4">
-                                                    <select wire:model="worker_attendance.{{ $worker->id }}" class="block w-full rounded-2xl border-slate-300 text-sm focus:border-amber-500 focus:ring-amber-500">
-                                                        @foreach ($attendanceStatuses as $statusValue => $statusLabel)
-                                                            <option value="{{ $statusValue }}">{{ $statusLabel }}</option>
-                                                        @endforeach
-                                                    </select>
-                                                </td>
-                                            </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                            </div>
+                        <div class="space-y-3">
+                            @foreach ($attendanceWorkers as $index => $worker)
+                                <div class="flex flex-col gap-2 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:flex-row sm:items-center sm:justify-between">
+                                    <div class="flex items-start gap-3">
+                                        <span class="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-slate-100 text-sm font-semibold text-slate-600">{{ $index + 1 }}</span>
+                                        <div>
+                                            <p class="font-medium text-slate-800">{{ $worker->name }}</p>
+                                            @if ($worker->job_title)
+                                                <p class="mt-0.5 text-xs text-slate-500">{{ $worker->job_title }}</p>
+                                            @endif
+                                        </div>
+                                    </div>
+                                    <div class="mt-2 sm:mt-0 sm:w-48">
+                                        <select wire:model="worker_attendance.{{ $worker->id }}" class="block w-full rounded-2xl border-slate-300 text-sm focus:border-amber-500 focus:ring-amber-500">
+                                            @foreach ($attendanceStatuses as $statusValue => $statusLabel)
+                                                <option value="{{ $statusValue }}">{{ $statusLabel }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                            @endforeach
                         </div>
                     @endif
 
@@ -130,17 +112,38 @@
             <div class="space-y-4">
                 <div class="space-y-3">
                     <x-input-label value="Foto laporan" />
-                    <label class="relative mt-2 inline-flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-2xl bg-slate-900 px-5 py-3 text-sm font-medium text-white sm:w-auto">
-                        Tambah foto
-                        <input
-                            id="gallery_photos"
-                            type="file"
-                            accept="image/*"
-                            multiple
-                            wire:model="galleryPhotos"
-                            class="absolute inset-0 cursor-pointer opacity-0"
-                        >
-                    </label>
+                    <div class="mt-2 flex flex-col gap-3 sm:flex-row">
+                        <label class="relative inline-flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-2xl bg-slate-900 px-5 py-3 text-sm font-medium text-white sm:w-auto">
+                            <svg class="mr-2 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM18.75 10.5h.008v.008h-.008V10.5z" />
+                            </svg>
+                            Kamera HP
+                            <input
+                                id="camera_photos"
+                                type="file"
+                                accept="image/*"
+                                capture="environment"
+                                wire:model="galleryPhotos"
+                                class="absolute inset-0 cursor-pointer opacity-0"
+                            >
+                        </label>
+
+                        <label class="relative inline-flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-2xl border border-slate-300 bg-white px-5 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50 sm:w-auto">
+                            <svg class="mr-2 h-5 w-5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
+                            </svg>
+                            Pilih dari Galeri
+                            <input
+                                id="gallery_photos"
+                                type="file"
+                                accept="image/*"
+                                multiple
+                                wire:model="galleryPhotos"
+                                class="absolute inset-0 cursor-pointer opacity-0"
+                            >
+                        </label>
+                    </div>
                     <p class="mt-2 text-xs text-slate-500">Pilih dari galeri atau kamera HP. Maksimal 10 MB per foto.</p>
                     <div wire:loading wire:target="galleryPhotos" class="mt-2 text-xs font-medium text-amber-700">Memproses foto...</div>
                     <x-input-error :messages="$errors->get('photos')" class="mt-2" />

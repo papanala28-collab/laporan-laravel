@@ -13,7 +13,7 @@ use App\Livewire\Reports\ReportShow;
 use App\Livewire\Users\UserIndex;
 use Illuminate\Support\Facades\Route;
 
-Route::view('/', 'welcome');
+Route::redirect('/', '/login');
 
 Route::middleware('auth')->group(function () {
     Route::view('profile', 'profile')->name('profile');

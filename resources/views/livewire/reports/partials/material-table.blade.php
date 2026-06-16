@@ -1,50 +1,31 @@
 <div class="space-y-3">
     <x-input-label value="Material" />
 
-    <div class="overflow-hidden rounded-3xl border border-slate-200 bg-white">
-        <div class="overflow-x-auto">
-            <table class="min-w-full table-fixed divide-y divide-slate-200 text-sm">
-                <colgroup>
-                    <col class="w-14">
-                    <col>
-                    <col class="w-32 sm:w-44">
-                    <col class="w-20 sm:w-24">
-                </colgroup>
-                <thead class="bg-slate-50 text-slate-500">
-                    <tr>
-                        <th class="px-3 py-3 text-center text-[11px] font-semibold uppercase tracking-[0.16em] sm:px-4">No</th>
-                        <th class="px-3 py-3 text-left text-[11px] font-semibold uppercase tracking-[0.16em] sm:px-4">Material</th>
-                        <th class="px-3 py-3 text-left text-[11px] font-semibold uppercase tracking-[0.16em] sm:px-4">Qty</th>
-                        <th class="px-3 py-3 text-right text-[11px] font-semibold uppercase tracking-[0.16em] sm:px-4">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-slate-100">
-                    @foreach ($material_rows as $index => $row)
-                        <tr>
-                            <td class="px-3 py-3 align-top text-center sm:px-4">
-                                <span class="inline-flex h-8 w-8 items-center justify-center rounded-full bg-slate-100 text-sm font-semibold text-slate-600">{{ $index + 1 }}</span>
-                            </td>
-                            <td class="px-3 py-3 sm:px-4">
-                                <x-text-input type="text" class="block w-full" wire:model="material_rows.{{ $index }}.name" placeholder="Nama material" />
-                            </td>
-                            <td class="px-3 py-3 sm:px-4">
-                                <x-text-input type="text" class="block w-full" wire:model="material_rows.{{ $index }}.qty" placeholder="Contoh: 10 sak" />
-                            </td>
-                            <td class="px-3 py-3 text-right align-middle sm:px-4">
-                                <button type="button" wire:click="removeMaterialRow({{ $index }})" class="rounded-full border border-rose-200 px-3 py-2 text-xs font-medium text-rose-600 transition hover:bg-rose-50">
-                                    Hapus
-                                </button>
-                            </td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
+    <div class="space-y-3">
+        @foreach ($material_rows as $index => $row)
+            <div class="flex flex-col gap-3 rounded-2xl border border-slate-200 bg-slate-50 p-4 sm:flex-row sm:items-center sm:bg-transparent sm:border-0 sm:p-0">
+                <span class="hidden sm:inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-slate-100 text-sm font-semibold text-slate-600">{{ $index + 1 }}</span>
+                <div class="flex-1">
+                    <x-text-input type="text" class="block w-full bg-white sm:bg-transparent" wire:model="material_rows.{{ $index }}.name" placeholder="Nama material" />
+                </div>
+                <div class="flex-1">
+                    <x-text-input type="text" class="block w-full bg-white sm:bg-transparent" wire:model="material_rows.{{ $index }}.qty" placeholder="Contoh: 10 sak" />
+                </div>
+                <div class="flex justify-end sm:block">
+                    <button type="button" wire:click="removeMaterialRow({{ $index }})" class="shrink-0 flex items-center justify-center gap-2 rounded-full border border-rose-200 px-4 py-2 sm:p-2.5 text-sm sm:text-base text-rose-600 transition hover:bg-rose-50" title="Hapus">
+                        <svg class="h-4 w-4 sm:h-5 sm:w-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                        <span class="sm:hidden font-medium">Hapus</span>
+                    </button>
+                </div>
+            </div>
+        @endforeach
     </div>
 
-    <div class="flex justify-end">
-        <button type="button" wire:click="addMaterialRow" class="rounded-full border border-amber-300 px-3 py-2 text-xs font-medium text-amber-700 sm:px-3 sm:py-1">
-            Tambah material
+    <div class="flex justify-end mt-2">
+        <button type="button" wire:click="addMaterialRow" class="rounded-full border border-amber-300 px-4 py-2 text-sm font-medium text-amber-700 transition hover:bg-amber-50">
+            + Tambah material
         </button>
     </div>
 
